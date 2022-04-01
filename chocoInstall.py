@@ -65,8 +65,13 @@ def copy_dir():
     global copylibDir
     currentDir = str(pathlib.Path().resolve())
     copylibDir = currentDir + "_copylib"
-
-    shutil.copytree(path, copylibDir)
+    
+    try:
+        if os.path.isdir(copylibDir):
+            shutil.rmtree(copylibDir)
+        shutil.copytree(path, copylibDir)
+    except OSError as e:
+        print(e)
 
 # # 複製 programData 到 當前目錄
 copy_dir()
@@ -76,7 +81,15 @@ dirs = list_dir()
 
 #下載資料夾內ps1的url
 for dir in dirs:
-    download_dir_file(dir)
+    try:
+        print(dir + " exec start")
+        download_dir_file(dir)
     
-    update_dir_file(dir, "url", "file")
-    update_url_to_filePath(dir)
+        update_dir_file(dir, "url", "file")
+        update_url_to_filePath(dir)
+        print(dir + " exec end")
+    except:
+        print("###" + dir + " exec fail###")
+
+    print("=========")
+
